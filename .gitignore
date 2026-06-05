@@ -1,0 +1,30 @@
+# Ignore Python files and directories
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+ENV/
+venv.bak/
+env.bak/
+
+# IDE directories
+.idea/
+.vscode/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# OS generated files
+.DS_Store
+Thumbs.db
