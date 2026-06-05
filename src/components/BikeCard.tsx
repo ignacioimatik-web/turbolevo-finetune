@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { EBike } from '../types'
-import { formatPrice, getUseTypeLabel, getUseTypeColor } from '../utils/helpers'
+import { formatPrice, getUseTypeLabel, getUseTypeColor, getBrandColor } from '../utils/helpers'
 import { useAppState } from '../context/AppContext'
 import { BikeImage } from './BikeImage'
 
@@ -8,11 +8,15 @@ export function BikeCard({ bike }: { bike: EBike }) {
   const { isInGarage, toggleCompare, isInCompare, addToGarage, removeFromGarage } = useAppState()
   const inGarage = isInGarage(bike.id)
   const inCompare = isInCompare(bike.id)
+  const brandColor = getBrandColor(bike.brand)
 
   return (
-    <div className="group panel-hover overflow-hidden animate-fade-in">
+    <div className="group panel-hover overflow-hidden animate-fade-in relative">
+      {/* Brand accent line */}
+      <div className="h-0.5 w-full absolute top-0 left-0 z-10" style={{ backgroundColor: brandColor }} />
       <Link to={`/bike/${bike.id}`} className="block">
         <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-bg-card/30 pointer-events-none z-10" />
           <BikeImage bike={bike} className="h-44" />
 
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
@@ -65,14 +69,14 @@ export function BikeCard({ bike }: { bike: EBike }) {
             {bike.tagline}
           </p>
 
-          <div className="grid grid-cols-4 gap-1.5 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
             {[
-              { label: 'Rec', value: `${bike.suspension.front.travel}/${bike.suspension.rear.travel}`, unit: 'mm' },
+              { label: 'Rec. F/R', value: `${bike.suspension.front.travel}/${bike.suspension.rear.travel}`, unit: 'mm' },
               { label: 'Batería', value: `${bike.battery.capacity}`, unit: 'Wh' },
               { label: 'Motor', value: `${bike.motor.torque}`, unit: 'Nm' },
               { label: 'Peso', value: `${bike.specs.weight}`, unit: 'kg' },
             ].map(stat => (
-              <div key={stat.label} className="text-center bg-bg-primary/50 rounded-lg py-1.5 px-1">
+              <div key={stat.label} className="text-center bg-bg-primary/60 border border-border/40 rounded-lg py-2 sm:py-1.5 px-1 transition-colors group-hover:border-border/60">
                 <p className="text-xs font-bold font-mono text-text-primary">{stat.value}</p>
                 <p className="text-[9px] text-text-muted font-mono">{stat.unit}</p>
               </div>
@@ -83,7 +87,7 @@ export function BikeCard({ bike }: { bike: EBike }) {
 
       <div className="flex gap-2 px-4 pb-4">
         <button
-          onClick={e => { e.preventDefault(); inGarage ? removeFromGarage(bike.id) : addToGarage(bike.id) }}
+          onClick={() => { if (inGarage) removeFromGarage(bike.id); else addToGarage(bike.id) }}
           className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 border ${
             inGarage
               ? 'bg-success/10 text-success border-success/30 hover:bg-success/20'
@@ -93,7 +97,7 @@ export function BikeCard({ bike }: { bike: EBike }) {
           {inGarage ? '★ En garaje' : '☆ Garaje'}
         </button>
         <button
-          onClick={e => { e.preventDefault(); toggleCompare(bike.id) }}
+          onClick={() => toggleCompare(bike.id)}
           className={`py-2 px-4 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-200 border ${
             inCompare
               ? 'bg-accent-subtle text-accent border-accent/30'

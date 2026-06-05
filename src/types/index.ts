@@ -15,7 +15,7 @@ export interface EBike {
   terrainStrengths: string[]
   weaknesses: string[]
   autonomyEstimate: number
-  imageTheme: string
+  imageTheme: 'carbon-lime' | 'desert-orange' | 'forest-green' | 'rock-grey' | 'mud-black' | 'alpine-blue'
   frame: {
     material: 'Carbon' | 'Aluminio'
     weight: number

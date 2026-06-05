@@ -31,6 +31,8 @@ export function BikeImage({
         viewBox="0 0 68 48"
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label={`${bike.brand} ${bike.model}`}
       >
         <defs>
           <linearGradient id={`grad-${bike.id}`} x1="0%" y1="0%" x2="100%" y2="100%">

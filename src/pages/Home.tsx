@@ -210,13 +210,13 @@ export function Home() {
       <section className="relative -mt-16 z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stats.map((stat, i) => (
-            <div key={stat.label} className="panel bg-bg-card/80 backdrop-blur-md px-4 py-4 sm:py-5 text-center animate-slide-up"
+            <div key={stat.label} className="panel bg-bg-card/80 backdrop-blur-md px-4 py-4 sm:py-5 text-center animate-slide-up hover:glow-accent-subtle hover:border-accent/15 transition-all duration-300"
               style={{ animationDelay: `${i * 100 + 200}ms` }}>
               <p className="text-xl sm:text-2xl font-bold font-mono text-accent">
                 {stat.value}{stat.suffix && <span className="text-sm text-text-muted font-mono ml-0.5">{stat.suffix}</span>}
               </p>
               <p className="text-[9px] sm:text-[10px] text-text-muted font-mono uppercase tracking-wider mt-1">{stat.label}</p>
-              <div className="w-8 h-0.5 bg-accent/30 mx-auto mt-2 rounded-full" />
+              <div className="w-8 h-0.5 bg-gradient-to-r from-accent/30 to-accent/10 mx-auto mt-2 rounded-full" />
             </div>
           ))}
         </div>
@@ -232,7 +232,7 @@ export function Home() {
               <span className="text-gradient-accent">su configuración</span>
             </h2>
           </div>
-          <Link to="/routes" className="btn-ghost text-xs hide-mobile">
+          <Link to="/terrain" className="btn-ghost text-xs hide-mobile">
             Ver todos los terrenos →
           </Link>
         </div>
@@ -240,7 +240,7 @@ export function Home() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {terrains.slice(0, 6).map((terrain, i) => (
             <div key={terrain.id} className="animate-slide-up" style={{ animationDelay: `${i * 80 + 200}ms` }}>
-              <Link to={`/routes?terrain=${terrain.id}`} className="block group">
+              <Link to={`/terrain#${terrain.id}`} className="block group">
                 <TerrainCard terrain={terrain} />
               </Link>
             </div>
@@ -248,14 +248,16 @@ export function Home() {
         </div>
 
         <div className="mt-8 text-center sm:hidden">
-          <Link to="/routes" className="btn-ghost text-xs">
+          <Link to="/terrain" className="btn-ghost text-xs">
             Ver todos los terrenos →
           </Link>
         </div>
       </section>
 
       {/* ── FEATURED BIKES ── */}
-      <section className="border-t border-border carbon-weave py-20 sm:py-28">
+      <section className="border-t border-border carbon-weave py-20 sm:py-28 relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+        <div className="absolute top-0 inset-x-1/4 h-32 bg-gradient-to-b from-accent/[0.02] to-transparent pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -421,7 +423,9 @@ export function Home() {
       {/* ── FINAL CTA ── */}
       <section className="border-t border-border carbon-weave relative overflow-hidden">
         <div className="absolute inset-0 topo-pattern" />
-        <div className="absolute inset-0 bg-gradient-to-r from-accent/[0.02] via-transparent to-accent/[0.02]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-accent/[0.03] via-transparent to-accent/[0.03]" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
         <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/10 to-transparent" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
@@ -443,7 +447,7 @@ export function Home() {
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
               </Link>
-              <Link to="/routes" className="btn-secondary text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-4">
+              <Link to="/terrain" className="btn-secondary text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-4">
                 Explorar terrenos
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="6 9 12 15 18 9" />

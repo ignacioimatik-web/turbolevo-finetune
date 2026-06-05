@@ -8,6 +8,8 @@ import { Compare } from './pages/Compare'
 import { Garage } from './pages/Garage'
 import { Setup } from './pages/Setup'
 import { Routes as RoutesPage } from './pages/Routes'
+import { TerrainEnduro } from './pages/TerrainEnduro'
+import { Recommendation } from './pages/Recommendation'
 
 export default function App() {
   return (
@@ -21,7 +23,9 @@ export default function App() {
             <Route path="/compare" element={<Compare />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/setup" element={<Setup />} />
+            <Route path="/terrain" element={<TerrainEnduro />} />
             <Route path="/routes" element={<RoutesPage />} />
+            <Route path="/recommendation" element={<Recommendation />} />
           </Routes>
         </Layout>
       </AppProvider>

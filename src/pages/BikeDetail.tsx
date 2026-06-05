@@ -1,11 +1,11 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAppState } from '../context/AppContext'
 import { BikeImage } from '../components/BikeImage'
 import { formatPrice, getUseTypeLabel, getUseTypeColor } from '../utils/helpers'
 
 function StatBox({ label, value, unit, accent }: { label: string; value: string; unit?: string; accent?: boolean }) {
   return (
-    <div className="bg-bg-primary/60 border border-border rounded-xl px-3 py-2.5 text-center">
+    <div className="bg-bg-primary/60 border border-border rounded-xl px-3 py-2.5 text-center transition-all duration-200 hover:border-border-hover hover:bg-bg-hover/30">
       <p className={`text-base sm:text-lg font-bold font-mono ${accent ? 'text-accent' : 'text-text-primary'}`}>
         {value}
         {unit && <span className="text-[10px] text-text-muted font-normal ml-0.5">{unit}</span>}
@@ -15,18 +15,18 @@ function StatBox({ label, value, unit, accent }: { label: string; value: string;
   )
 }
 
-function SectionTitle({ label }: { label: string }) {
+function SectionTitle({ label, color }: { label: string; color?: string }) {
   return (
     <div className="flex items-center gap-2 mb-4">
-      <div className="w-1 h-4 rounded-full bg-accent" />
-      <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent font-mono">{label}</span>
+      <div className="w-1 h-4 rounded-full" style={{ backgroundColor: color || 'var(--color-accent)' }} />
+      <span className="text-[10px] font-bold uppercase tracking-[0.15em] font-mono" style={{ color: color || 'var(--color-accent)' }}>{label}</span>
     </div>
   )
 }
 
 function SpecRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex justify-between items-center py-1.5 border-b border-border/40 last:border-0">
+    <div className="flex justify-between items-center py-1.5 border-b border-border/40 last:border-0 hover:bg-bg-hover/30 px-1 -mx-1 rounded transition-colors duration-150">
       <span className="text-[11px] text-text-muted">{label}</span>
       <span className={`text-[11px] font-mono font-medium ${highlight ? 'text-accent' : 'text-text-primary'}`}>{value}</span>
     </div>
@@ -41,8 +41,16 @@ function AutonomyBar({ mode, km, max }: { mode: string; km: number; max: number 
     Breeze: 'from-accent to-accent/60',
     River: 'from-warning to-warning/60',
     Rocket: 'from-energy to-energy/60',
+    Turbo: 'from-energy to-energy/60',
+    Boost: 'from-energy to-energy/40',
+    eMTB: 'from-warning to-warning/60',
+    'Tour+': 'from-accent to-accent/40',
+    Standard: 'from-accent to-accent/40',
+    High: 'from-warning to-warning/40',
+    AUTO: 'from-warning to-warning/40',
+    'Fine Tune': 'from-accent to-accent/40',
   }
-  const barColor = colorMap[mode] || 'from-accent to-accent/60'
+  const barColor = colorMap[mode] || (mode.toLowerCase().includes('turbo') || mode.toLowerCase().includes('boost') || mode.toLowerCase().includes('rocket') ? 'from-energy to-energy/60' : 'from-accent to-accent/60')
 
   return (
     <div>
@@ -50,9 +58,9 @@ function AutonomyBar({ mode, km, max }: { mode: string; km: number; max: number 
         <span className="text-text-muted font-mono uppercase tracking-wider text-[10px]">{mode}</span>
         <span className="text-text-primary font-mono font-semibold">{km} km</span>
       </div>
-      <div className="h-2 bg-bg-hover rounded-full overflow-hidden">
+      <div className="h-2 bg-bg-hover rounded-full overflow-hidden ring-1 ring-inset ring-white/5">
         <div
-          className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all duration-500`}
+          className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all duration-700 ease-out`}
           style={{ width: `${(km / max) * 100}%` }}
         />
       </div>
@@ -77,8 +85,9 @@ function InfoChip({ label, color }: { label: string; color: string }) {
 
 export function BikeDetail() {
   const { id } = useParams()
-  const { bikes, isInGarage, addToGarage, removeFromGarage, toggleCompare, isInCompare } = useAppState()
-  const bike = bikes.find(b => b.id === id)
+  const navigate = useNavigate()
+  const { getBike, isInGarage, addToGarage, removeFromGarage, toggleCompare, isInCompare } = useAppState()
+  const bike = id ? getBike(id) : undefined
 
   if (!bike) {
     return (
@@ -102,24 +111,25 @@ export function BikeDetail() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back */}
-      <Link to="/catalog" className="inline-flex items-center gap-1.5 text-[10px] text-text-muted hover:text-accent transition-colors mb-6 font-mono uppercase tracking-wider group">
+      <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-[10px] text-text-muted hover:text-accent transition-colors mb-6 font-mono uppercase tracking-wider group">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-0.5 transition-transform">
           <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
         </svg>
-        Volver al catálogo
-      </Link>
+        Volver
+      </button>
 
       {/* ── HERO ── */}
-      <div className="panel overflow-hidden mb-6">
+      <div className="panel overflow-hidden mb-6 relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent z-20" />
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-bg-primary via-transparent to-bg-primary pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-bg-primary/60 via-transparent to-bg-primary/40 pointer-events-none z-10" />
           <BikeImage bike={bike} className="h-48 sm:h-64 lg:h-72" />
         </div>
 
         <div className="p-5 sm:p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row lg:items-start gap-6">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">{bike.brand}</span>
                 <span className="text-text-muted/40">·</span>
                 <span className="text-[10px] font-mono text-text-muted">{bike.year}</span>
@@ -199,7 +209,8 @@ export function BikeDetail() {
           </div>
 
           {/* Description */}
-          <div className="panel p-5">
+          <div className="panel p-5 relative">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
             <SectionTitle label="Descripción" />
             <p className="text-xs text-text-secondary leading-relaxed">
               {bike.description}
@@ -277,7 +288,7 @@ export function BikeDetail() {
               <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted mb-3">Autonomía estimada</p>
               <div className="space-y-2.5">
                 <AutonomyBar mode={bike.motor.assistModes[0]} km={bike.battery.range.eco} max={maxAutonomy} />
-                <AutonomyBar mode={bike.motor.assistModes[1]} km={bike.battery.range.trail} max={maxAutonomy} />
+                {bike.motor.assistModes[1] && <AutonomyBar mode={bike.motor.assistModes[1]} km={bike.battery.range.trail} max={maxAutonomy} />}
                 <AutonomyBar mode={bike.motor.assistModes[2] || 'Turbo/Boost'} km={bike.battery.range.turbo} max={maxAutonomy} />
               </div>
             </div>
@@ -293,15 +304,15 @@ export function BikeDetail() {
               Configuración de referencia para rider de {bike.setupBase.riderWeightKg} kg
             </p>
 
-            <div className="space-y-4">
+              <div className="space-y-4">
               <div>
                 <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted mb-2">Presión</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center">
+                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center transition-all hover:border-border-hover">
                     <p className="text-[9px] text-text-muted font-mono">Delantera</p>
                     <p className="text-base font-bold font-mono text-text-primary">{bike.setupBase.frontPsi} <span className="text-[10px] text-text-muted font-normal">psi</span></p>
                   </div>
-                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center">
+                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center transition-all hover:border-border-hover">
                     <p className="text-[9px] text-text-muted font-mono">Trasera</p>
                     <p className="text-base font-bold font-mono text-text-primary">{bike.setupBase.rearPsi} <span className="text-[10px] text-text-muted font-normal">psi</span></p>
                   </div>
@@ -311,13 +322,13 @@ export function BikeDetail() {
               <div>
                 <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted mb-2">Sag</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center">
+                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center transition-all hover:border-border-hover">
                     <p className="text-[9px] text-text-muted font-mono">Delantero</p>
                     <p className={`text-base font-bold font-mono ${bike.setupBase.sagFrontPercent >= 22 && bike.setupBase.sagFrontPercent <= 28 ? 'text-accent' : 'text-energy'}`}>
                       {bike.setupBase.sagFrontPercent}%
                     </p>
                   </div>
-                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center">
+                  <div className="bg-bg-primary rounded-lg border border-border px-3 py-2.5 text-center transition-all hover:border-border-hover">
                     <p className="text-[9px] text-text-muted font-mono">Trasero</p>
                     <p className={`text-base font-bold font-mono ${bike.setupBase.sagRearPercent >= 22 && bike.setupBase.sagRearPercent <= 28 ? 'text-accent' : 'text-energy'}`}>
                       {bike.setupBase.sagRearPercent}%
@@ -326,12 +337,12 @@ export function BikeDetail() {
                 </div>
               </div>
 
-              <div className="bg-bg-primary rounded-lg border border-border p-3">
+              <div className="bg-bg-primary rounded-lg border border-border p-3 hover:border-border-hover transition-all">
                 <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted mb-1">Modo motor recomendado</p>
                 <p className="text-sm font-bold font-mono text-accent">{bike.setupBase.motorModeRecommendation}</p>
               </div>
 
-              <div className="bg-accent-subtle/50 rounded-lg border border-accent/15 p-3">
+              <div className="bg-accent-subtle/50 rounded-lg border border-accent/15 p-3 hover:bg-accent-subtle transition-all">
                 <p className="text-[9px] font-mono uppercase tracking-widest text-accent mb-1">Notas de rebote</p>
                 <p className="text-[11px] text-text-secondary leading-relaxed">{bike.setupBase.reboundNotes}</p>
               </div>

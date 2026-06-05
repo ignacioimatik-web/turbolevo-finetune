@@ -16,7 +16,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Senderos técnicos', 'Subidas largas', 'Enduro mixto'],
     weaknesses: ['Autonomía limitada en Turbo', 'Precio elevado', 'Motor menos potente que Bosch CX'],
     autonomyEstimate: 80,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'carbon-lime',
     frame: {
       material: 'Carbon',
       weight: 2.6,
@@ -80,7 +80,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Bajadas agresivas', 'Terreno rocoso', 'Zonas de bike park'],
     weaknesses: ['Peso elevado', 'Batería no extraíble en ciertos mercados', 'Mantenimiento de bieletas'],
     autonomyEstimate: 88,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'desert-orange',
     frame: {
       material: 'Carbon',
       weight: 2.7,
@@ -144,7 +144,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Descensos técnicos', 'Alta velocidad', 'Terreno roto'],
     weaknesses: ['Peso en la parte alta', 'Precio premium', 'Menos ágil en curvas cerradas'],
     autonomyEstimate: 90,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'rock-grey',
     frame: {
       material: 'Carbon',
       weight: 2.8,
@@ -208,7 +208,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Rutas largas', 'Ascensos prolongados', 'Enduro versátil'],
     weaknesses: ['Mantenimiento Shapeshifter', 'Peso elevado', 'Distribución de peso'],
     autonomyEstimate: 110,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'forest-green',
     frame: {
       material: 'Carbon',
       weight: 2.5,
@@ -272,7 +272,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Calidad/precio', 'Descensos técnicos', 'Durabilidad'],
     weaknesses: ['Peso elevado', 'Autonomía media', 'Cuadro aluminio más pesado que carbono'],
     autonomyEstimate: 70,
-    imageTheme: 'raw-aluminum',
+    imageTheme: 'mud-black',
     frame: {
       material: 'Aluminio',
       weight: 3.0,
@@ -336,7 +336,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Descensos a alta velocidad', 'Terreno roto', 'Estabilidad en rectas'],
     weaknesses: ['Precio muy elevado', 'Batería no extraíble', 'Peso trasero alto por high-pivot'],
     autonomyEstimate: 75,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'alpine-blue',
     frame: {
       material: 'Carbon',
       weight: 2.5,
@@ -400,7 +400,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Calidad/precio', 'Versatilidad', 'Facilidad de mantenimiento'],
     weaknesses: ['Peso elevado', 'Componentes de nivel medio', 'Suspensión trasera básica'],
     autonomyEstimate: 85,
-    imageTheme: 'raw-aluminum',
+    imageTheme: 'forest-green',
     frame: {
       material: 'Aluminio',
       weight: 3.2,
@@ -464,7 +464,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Descensos extremos', 'Terreno rocoso', 'Bike park'],
     weaknesses: ['Precio premium', 'Peso elevado', 'No ideal para rutas largas'],
     autonomyEstimate: 85,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'desert-orange',
     frame: {
       material: 'Carbon',
       weight: 2.7,
@@ -528,7 +528,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Relación calidad/precio', 'Descensos agresivos', 'Componentes premium por precio'],
     weaknesses: ['Servicio postventa limitado', 'Geometría muy radical para principiantes', 'Batería no extraíble'],
     autonomyEstimate: 80,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'mud-black',
     frame: {
       material: 'Carbon',
       weight: 2.6,
@@ -592,7 +592,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Estabilidad en descenso', 'Trazado de curvas a alta velocidad', 'Terreno roto'],
     weaknesses: ['Menos ágil en senderos estrechos', 'Posición muy larga', 'Peso elevado'],
     autonomyEstimate: 85,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'rock-grey',
     frame: {
       material: 'Carbon',
       weight: 2.7,
@@ -656,7 +656,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Durabilidad', 'Versatilidad de ruedas', 'Autonomía'],
     weaknesses: ['Peso muy elevado', 'Motor Yamaha menos extendido', 'Cuadro aluminio pesado'],
     autonomyEstimate: 95,
-    imageTheme: 'raw-aluminum',
+    imageTheme: 'carbon-lime',
     frame: {
       material: 'Aluminio',
       weight: 3.3,
@@ -720,7 +720,7 @@ export const bikes: EBike[] = [
     terrainStrengths: ['Ligereza', 'Sensación natural', 'Senderos técnicos subiendo'],
     weaknesses: ['Autonomía reducida', 'Recorrido contenido', 'Batería fija'],
     autonomyEstimate: 55,
-    imageTheme: 'carbon-dark',
+    imageTheme: 'alpine-blue',
     frame: {
       material: 'Carbon',
       weight: 2.2,

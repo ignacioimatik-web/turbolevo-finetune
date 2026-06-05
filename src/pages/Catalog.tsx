@@ -1,17 +1,22 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { BikeCard } from '../components/BikeCard'
 import { FilterBar } from '../components/FilterBar'
 import { useAppState } from '../context/AppContext'
 import { filterBikes, createDefaultFilters, formatNumber } from '../utils/helpers'
-import type { FilterState } from '../types'
+import type { FilterState, UseType } from '../types'
 
 const ACTIVE_COLOR = '#84cc16'
 
 export function Catalog() {
   const { bikes } = useAppState()
+  const [searchParams] = useSearchParams()
+  const usoParam = searchParams.get('uso') as UseType | null
   const defaultFilters = useMemo(() => createDefaultFilters(bikes), [bikes])
-  const [filters, setFilters] = useState<FilterState>(defaultFilters)
+  const initialFilters: FilterState = usoParam && ['trail', 'enduro', 'bikepark', 'rutas-largas'].includes(usoParam)
+    ? { ...defaultFilters, useTypes: [usoParam] }
+    : defaultFilters
+  const [filters, setFilters] = useState<FilterState>(initialFilters)
   const [showFilters, setShowFilters] = useState(false)
   const filtered = useMemo(() => filterBikes(bikes, filters), [bikes, filters])
 
@@ -33,10 +38,13 @@ export function Catalog() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-text-primary">
-            Catálogo de e-bikes
-          </h1>
-          <div className="flex items-center gap-2 mt-0.5">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-1 h-6 rounded-full bg-accent" />
+            <h1 className="text-xl sm:text-2xl font-bold text-text-primary">
+              Catálogo de e-bikes
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 mt-0.5 ml-4">
             <span className="text-xs text-text-muted font-mono">
               {bikes.length} modelos · {filtered.length} resultados
             </span>
@@ -66,8 +74,29 @@ export function Catalog() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
+        {/* Mobile filter overlay */}
+        {showFilters && (
+          <div className="fixed inset-0 z-40 lg:hidden">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowFilters(false)} />
+            <div className="absolute inset-x-0 bottom-0 top-16 bg-bg-primary border-t border-border overflow-y-auto px-4 py-5 animate-slide-up">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold uppercase tracking-widest text-text-primary">Filtros</span>
+                <button onClick={() => setShowFilters(false)} className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-accent-hover transition-colors">
+                  Cerrar
+                </button>
+              </div>
+              <FilterBar
+                filters={filters}
+                setFilters={setFilters}
+                results={filtered.length}
+                bikes={bikes}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Filters sidebar */}
-        <aside className={`lg:w-64 xl:w-72 shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+        <aside className={`hidden lg:block lg:w-64 xl:w-72 shrink-0`}>
           <div className="lg:sticky lg:top-24 space-y-4">
             <FilterBar
               filters={filters}
@@ -130,8 +159,9 @@ export function Catalog() {
               </div>
             </>
           ) : (
-            <div className="panel p-12 text-center animate-scale-in">
-              <div className="w-16 h-16 rounded-2xl bg-accent-subtle flex items-center justify-center mx-auto mb-5">
+            <div className="panel p-8 sm:p-12 text-center animate-scale-in relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+              <div className="w-16 h-16 rounded-2xl bg-accent-subtle flex items-center justify-center mx-auto mb-5 ring-1 ring-accent/20">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={ACTIVE_COLOR} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
@@ -147,7 +177,7 @@ export function Catalog() {
                 >
                   Limpiar filtros
                 </button>
-                <Link to="/routes" className="btn-secondary text-xs">
+                <Link to="/terrain" className="btn-secondary text-xs">
                   Explorar terrenos
                 </Link>
               </div>

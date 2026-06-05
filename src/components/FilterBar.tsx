@@ -1,6 +1,6 @@
 import type { FilterState, SortOption, UseType } from '../types'
 import { brands } from '../data/bikes'
-import { getUseTypeLabel, getMotorBrands, getBrandColor } from '../utils/helpers'
+import { getUseTypeLabel, getMotorBrands, createDefaultFilters } from '../utils/helpers'
 import type { EBike } from '../types'
 
 interface FilterBarProps {
@@ -55,7 +55,7 @@ function RangeSlider({
           value={value[0]}
           onChange={e => onChange([Math.min(Number(e.target.value), value[1] - step), value[1]])}
           className="w-full h-1.5 bg-bg-hover rounded-full appearance-none cursor-pointer accent-accent
-            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 sm:w-3.5 [&::-webkit-slider-thumb]:h-5 sm:h-3.5
             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:border-2
             [&::-webkit-slider-thumb]:border-bg-card [&::-webkit-slider-thumb]:shadow-md
             [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-200
@@ -69,7 +69,7 @@ function RangeSlider({
           value={value[1]}
           onChange={e => onChange([value[0], Math.max(Number(e.target.value), value[0] + step)])}
           className="w-full h-1.5 bg-bg-hover rounded-full appearance-none cursor-pointer accent-accent
-            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 sm:w-3.5 [&::-webkit-slider-thumb]:h-5 sm:h-3.5
             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:border-2
             [&::-webkit-slider-thumb]:border-bg-card [&::-webkit-slider-thumb]:shadow-md
             [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-200
@@ -82,14 +82,7 @@ function RangeSlider({
 
 export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProps) {
   const motorBrands = getMotorBrands(bikes)
-  const def = {
-    priceRange: [Math.min(...bikes.map(b => b.price)), Math.max(...bikes.map(b => b.price))] as [number, number],
-    travelRange: [Math.min(...bikes.map(b => b.suspension.front.travel)), Math.max(...bikes.map(b => b.suspension.front.travel))] as [number, number],
-    rearTravelRange: [Math.min(...bikes.map(b => b.suspension.rear.travel)), Math.max(...bikes.map(b => b.suspension.rear.travel))] as [number, number],
-    batteryRange: [Math.min(...bikes.map(b => b.battery.capacity)), Math.max(...bikes.map(b => b.battery.capacity))] as [number, number],
-    weightRange: [Math.min(...bikes.map(b => b.specs.weight)), Math.max(...bikes.map(b => b.specs.weight))] as [number, number],
-    motorTorqueRange: [Math.min(...bikes.map(b => b.motor.torque)), Math.max(...bikes.map(b => b.motor.torque))] as [number, number],
-  }
+  const def = createDefaultFilters(bikes)
 
   const toggle = <T,>(arr: T[], item: T): T[] =>
     arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item]
@@ -112,32 +105,19 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
     filters.motorTorqueRange[0] !== def.motorTorqueRange[0] ||
     filters.motorTorqueRange[1] !== def.motorTorqueRange[1]
 
-  const resetFilters = () => {
-    setFilters({
-      brands: [],
-      motorBrands: [],
-      useTypes: [],
-      priceRange: def.priceRange,
-      travelRange: def.travelRange,
-      rearTravelRange: def.rearTravelRange,
-      batteryRange: def.batteryRange,
-      weightRange: def.weightRange,
-      motorTorqueRange: def.motorTorqueRange,
-      sortBy: 'price-asc',
-      search: '',
-    })
-  }
+  const resetFilters = () => setFilters({ ...def })
 
   return (
     <div className="panel p-4 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <div className="w-1 h-4 rounded-full bg-accent" />
           <span className="text-xs font-bold uppercase tracking-widest text-text-primary">Filtros</span>
           <span className="text-[10px] font-mono text-text-muted">({results})</span>
         </div>
         {hasActiveFilters && (
-          <button onClick={resetFilters} className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-accent-hover transition-colors">
+          <button onClick={resetFilters} className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-accent-hover active:scale-95 transition-all duration-200">
             Limpiar
           </button>
         )}
@@ -163,9 +143,9 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
             <button
               key={brand}
               onClick={() => setFilters({ ...filters, brands: toggle(filters.brands, brand) })}
-              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
+              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
                 filters.brands.includes(brand)
-                  ? 'bg-accent-subtle text-accent border-accent/30'
+                  ? 'bg-accent-subtle text-accent border-accent/30 shadow-sm shadow-accent/10'
                   : 'bg-bg-primary text-text-muted border-border hover:text-text-primary hover:border-border-hover'
               }`}
             >
@@ -183,9 +163,9 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
             <button
               key={mb}
               onClick={() => setFilters({ ...filters, motorBrands: toggle(filters.motorBrands, mb) })}
-              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
+              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
                 filters.motorBrands.includes(mb)
-                  ? 'bg-accent-subtle text-accent border-accent/30'
+                  ? 'bg-accent-subtle text-accent border-accent/30 shadow-sm shadow-accent/10'
                   : 'bg-bg-primary text-text-muted border-border hover:text-text-primary hover:border-border-hover'
               }`}
             >
@@ -203,9 +183,9 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
             <button
               key={type}
               onClick={() => setFilters({ ...filters, useTypes: toggle(filters.useTypes, type) })}
-              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
+              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
                 filters.useTypes.includes(type)
-                  ? 'bg-accent-subtle text-accent border-accent/30'
+                  ? 'bg-accent-subtle text-accent border-accent/30 shadow-sm shadow-accent/10'
                   : 'bg-bg-primary text-text-muted border-border hover:text-text-primary hover:border-border-hover'
               }`}
             >
@@ -214,6 +194,9 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
           ))}
         </div>
       </div>
+
+      {/* Divider */}
+      <div className="border-t border-border/60" />
 
       {/* Price */}
       <RangeSlider
@@ -281,6 +264,9 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
         format={n => `${n}Nm`}
       />
 
+      {/* Divider */}
+      <div className="border-t border-border/60" />
+
       {/* Sort */}
       <div>
         <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">Ordenar</span>
@@ -300,7 +286,7 @@ export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProp
       {hasActiveFilters && (
         <button
           onClick={resetFilters}
-          className="w-full py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-border text-text-muted hover:border-border-hover hover:text-text-primary transition-all duration-200"
+          className="w-full py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-border text-text-muted hover:border-border-hover hover:text-text-primary active:scale-[0.98] transition-all duration-200"
         >
           Resetear filtros
         </button>
