@@ -98,9 +98,11 @@ export type SortOption = 'price-asc' | 'price-desc' | 'weight-asc' | 'weight-des
 
 export interface FilterState {
   brands: string[]
+  motorBrands: string[]
   useTypes: UseType[]
   priceRange: [number, number]
   travelRange: [number, number]
+  rearTravelRange: [number, number]
   batteryRange: [number, number]
   weightRange: [number, number]
   motorTorqueRange: [number, number]

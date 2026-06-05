@@ -1,11 +1,13 @@
 import type { FilterState, SortOption, UseType } from '../types'
-import { brands, priceRange, travelRange, batteryRange, weightRange, motorTorqueRange } from '../data/bikes'
-import { getUseTypeLabel } from '../utils/helpers'
+import { brands } from '../data/bikes'
+import { getUseTypeLabel, getMotorBrands, getBrandColor } from '../utils/helpers'
+import type { EBike } from '../types'
 
 interface FilterBarProps {
   filters: FilterState
   setFilters: (f: FilterState) => void
   results: number
+  bikes: EBike[]
 }
 
 const useTypes: UseType[] = ['trail', 'enduro', 'bikepark', 'rutas-largas']
@@ -78,91 +80,89 @@ function RangeSlider({
   )
 }
 
-export function FilterBar({ filters, setFilters, results }: FilterBarProps) {
-  const toggleBrand = (brand: string) => {
-    setFilters({
-      ...filters,
-      brands: filters.brands.includes(brand)
-        ? filters.brands.filter(b => b !== brand)
-        : [...filters.brands, brand],
-    })
+export function FilterBar({ filters, setFilters, results, bikes }: FilterBarProps) {
+  const motorBrands = getMotorBrands(bikes)
+  const def = {
+    priceRange: [Math.min(...bikes.map(b => b.price)), Math.max(...bikes.map(b => b.price))] as [number, number],
+    travelRange: [Math.min(...bikes.map(b => b.suspension.front.travel)), Math.max(...bikes.map(b => b.suspension.front.travel))] as [number, number],
+    rearTravelRange: [Math.min(...bikes.map(b => b.suspension.rear.travel)), Math.max(...bikes.map(b => b.suspension.rear.travel))] as [number, number],
+    batteryRange: [Math.min(...bikes.map(b => b.battery.capacity)), Math.max(...bikes.map(b => b.battery.capacity))] as [number, number],
+    weightRange: [Math.min(...bikes.map(b => b.specs.weight)), Math.max(...bikes.map(b => b.specs.weight))] as [number, number],
+    motorTorqueRange: [Math.min(...bikes.map(b => b.motor.torque)), Math.max(...bikes.map(b => b.motor.torque))] as [number, number],
   }
 
-  const toggleUseType = (type: UseType) => {
-    setFilters({
-      ...filters,
-      useTypes: filters.useTypes.includes(type)
-        ? filters.useTypes.filter(t => t !== type)
-        : [...filters.useTypes, type],
-    })
-  }
+  const toggle = <T,>(arr: T[], item: T): T[] =>
+    arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item]
 
   const hasActiveFilters =
     filters.brands.length > 0 ||
+    filters.motorBrands.length > 0 ||
     filters.useTypes.length > 0 ||
-    filters.search ||
-    filters.priceRange[0] !== priceRange[0] ||
-    filters.priceRange[1] !== priceRange[1] ||
-    filters.travelRange[0] !== travelRange[0] ||
-    filters.travelRange[1] !== travelRange[1] ||
-    filters.batteryRange[0] !== batteryRange[0] ||
-    filters.batteryRange[1] !== batteryRange[1] ||
-    filters.weightRange[0] !== weightRange[0] ||
-    filters.weightRange[1] !== weightRange[1] ||
-    filters.motorTorqueRange[0] !== motorTorqueRange[0] ||
-    filters.motorTorqueRange[1] !== motorTorqueRange[1]
+    filters.search !== '' ||
+    filters.priceRange[0] !== def.priceRange[0] ||
+    filters.priceRange[1] !== def.priceRange[1] ||
+    filters.travelRange[0] !== def.travelRange[0] ||
+    filters.travelRange[1] !== def.travelRange[1] ||
+    filters.rearTravelRange[0] !== def.rearTravelRange[0] ||
+    filters.rearTravelRange[1] !== def.rearTravelRange[1] ||
+    filters.batteryRange[0] !== def.batteryRange[0] ||
+    filters.batteryRange[1] !== def.batteryRange[1] ||
+    filters.weightRange[0] !== def.weightRange[0] ||
+    filters.weightRange[1] !== def.weightRange[1] ||
+    filters.motorTorqueRange[0] !== def.motorTorqueRange[0] ||
+    filters.motorTorqueRange[1] !== def.motorTorqueRange[1]
+
+  const resetFilters = () => {
+    setFilters({
+      brands: [],
+      motorBrands: [],
+      useTypes: [],
+      priceRange: def.priceRange,
+      travelRange: def.travelRange,
+      rearTravelRange: def.rearTravelRange,
+      batteryRange: def.batteryRange,
+      weightRange: def.weightRange,
+      motorTorqueRange: def.motorTorqueRange,
+      sortBy: 'price-asc',
+      search: '',
+    })
+  }
 
   return (
     <div className="panel p-4 space-y-5">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase tracking-widest text-text-primary">Filtros</span>
           <span className="text-[10px] font-mono text-text-muted">({results})</span>
         </div>
         {hasActiveFilters && (
-          <button
-            onClick={() =>
-              setFilters({
-                brands: [],
-                useTypes: [],
-                priceRange: [priceRange[0], priceRange[1]],
-                travelRange: [travelRange[0], travelRange[1]],
-                batteryRange: [batteryRange[0], batteryRange[1]],
-                weightRange: [weightRange[0], weightRange[1]],
-                motorTorqueRange: [motorTorqueRange[0], motorTorqueRange[1]],
-                sortBy: 'price-asc',
-                search: '',
-              })
-            }
-            className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-accent-hover transition-colors"
-          >
+          <button onClick={resetFilters} className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-accent-hover transition-colors">
             Limpiar
           </button>
         )}
       </div>
 
+      {/* Search */}
       <div>
-        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">
-          Buscar
-        </span>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">Buscar</span>
         <input
           type="text"
-          placeholder="Marca, modelo..."
+          placeholder="Marca, modelo, motor..."
           value={filters.search}
           onChange={e => setFilters({ ...filters, search: e.target.value })}
           className="input-field text-xs"
         />
       </div>
 
+      {/* Brand */}
       <div>
-        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">
-          Marca
-        </span>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">Marca</span>
         <div className="flex flex-wrap gap-1.5">
           {brands.map(brand => (
             <button
               key={brand}
-              onClick={() => toggleBrand(brand)}
+              onClick={() => setFilters({ ...filters, brands: toggle(filters.brands, brand) })}
               className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
                 filters.brands.includes(brand)
                   ? 'bg-accent-subtle text-accent border-accent/30'
@@ -175,15 +175,34 @@ export function FilterBar({ filters, setFilters, results }: FilterBarProps) {
         </div>
       </div>
 
+      {/* Motor Brand */}
       <div>
-        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">
-          Tipo de uso
-        </span>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">Motor</span>
+        <div className="flex flex-wrap gap-1.5">
+          {motorBrands.map(mb => (
+            <button
+              key={mb}
+              onClick={() => setFilters({ ...filters, motorBrands: toggle(filters.motorBrands, mb) })}
+              className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
+                filters.motorBrands.includes(mb)
+                  ? 'bg-accent-subtle text-accent border-accent/30'
+                  : 'bg-bg-primary text-text-muted border-border hover:text-text-primary hover:border-border-hover'
+              }`}
+            >
+              {mb}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Use type */}
+      <div>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">Tipo de uso</span>
         <div className="flex flex-wrap gap-1.5">
           {useTypes.map(type => (
             <button
               key={type}
-              onClick={() => toggleUseType(type)}
+              onClick={() => setFilters({ ...filters, useTypes: toggle(filters.useTypes, type) })}
               className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
                 filters.useTypes.includes(type)
                   ? 'bg-accent-subtle text-accent border-accent/30'
@@ -196,60 +215,75 @@ export function FilterBar({ filters, setFilters, results }: FilterBarProps) {
         </div>
       </div>
 
+      {/* Price */}
       <RangeSlider
         label="Precio"
-        min={priceRange[0]}
-        max={priceRange[1]}
+        min={def.priceRange[0]}
+        max={def.priceRange[1]}
         step={500}
         value={filters.priceRange}
         onChange={v => setFilters({ ...filters, priceRange: v })}
         format={n => `${n.toLocaleString('es-ES')}€`}
       />
 
+      {/* Front travel */}
       <RangeSlider
-        label="Recorrido"
-        min={travelRange[0]}
-        max={travelRange[1]}
+        label="Recorrido del."
+        min={def.travelRange[0]}
+        max={def.travelRange[1]}
         step={5}
         value={filters.travelRange}
         onChange={v => setFilters({ ...filters, travelRange: v })}
         format={n => `${n}mm`}
       />
 
+      {/* Rear travel */}
+      <RangeSlider
+        label="Recorrido tras."
+        min={def.rearTravelRange[0]}
+        max={def.rearTravelRange[1]}
+        step={5}
+        value={filters.rearTravelRange}
+        onChange={v => setFilters({ ...filters, rearTravelRange: v })}
+        format={n => `${n}mm`}
+      />
+
+      {/* Battery */}
       <RangeSlider
         label="Batería"
-        min={batteryRange[0]}
-        max={batteryRange[1]}
+        min={def.batteryRange[0]}
+        max={def.batteryRange[1]}
         step={50}
         value={filters.batteryRange}
         onChange={v => setFilters({ ...filters, batteryRange: v })}
         format={n => `${n}Wh`}
       />
 
+      {/* Weight */}
       <RangeSlider
         label="Peso"
-        min={weightRange[0]}
-        max={weightRange[1]}
+        min={def.weightRange[0]}
+        max={def.weightRange[1]}
         step={0.5}
         value={filters.weightRange}
         onChange={v => setFilters({ ...filters, weightRange: v })}
         format={n => `${n}kg`}
       />
 
+      {/* Motor torque */}
       <RangeSlider
         label="Par motor"
-        min={motorTorqueRange[0]}
-        max={motorTorqueRange[1]}
+        min={def.motorTorqueRange[0]}
+        max={def.motorTorqueRange[1]}
         step={5}
         value={filters.motorTorqueRange}
         onChange={v => setFilters({ ...filters, motorTorqueRange: v })}
         format={n => `${n}Nm`}
       />
 
+      {/* Sort */}
       <div>
-        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">
-          Ordenar
-        </span>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-2">Ordenar</span>
         <select
           value={filters.sortBy}
           onChange={e => setFilters({ ...filters, sortBy: e.target.value as SortOption })}
@@ -261,6 +295,16 @@ export function FilterBar({ filters, setFilters, results }: FilterBarProps) {
           ))}
         </select>
       </div>
+
+      {/* Reset button at bottom */}
+      {hasActiveFilters && (
+        <button
+          onClick={resetFilters}
+          className="w-full py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-border text-text-muted hover:border-border-hover hover:text-text-primary transition-all duration-200"
+        >
+          Resetear filtros
+        </button>
+      )}
     </div>
   )
 }

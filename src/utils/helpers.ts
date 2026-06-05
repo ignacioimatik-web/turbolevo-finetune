@@ -1,4 +1,4 @@
-import type { EBike, UseType } from '../types'
+import type { EBike, UseType, FilterState, SortOption } from '../types'
 
 export function formatPrice(eur: number): string {
   return new Intl.NumberFormat('es-ES', {
@@ -62,11 +62,19 @@ export function getBrandColor(brand: string): string {
   return colors[brand] || '#71717a'
 }
 
+export function getMotorBrands(bikes: EBike[]): string[] {
+  return [...new Set(bikes.map(b => b.motor.brand))].sort()
+}
+
 export function filterBikes(bikes: EBike[], filters: FilterState): EBike[] {
   let result = [...bikes]
 
   if (filters.brands.length > 0) {
     result = result.filter(b => filters.brands.includes(b.brand))
+  }
+
+  if (filters.motorBrands.length > 0) {
+    result = result.filter(b => filters.motorBrands.includes(b.motor.brand))
   }
 
   if (filters.useTypes.length > 0) {
@@ -83,6 +91,12 @@ export function filterBikes(bikes: EBike[], filters: FilterState): EBike[] {
     b =>
       b.suspension.front.travel >= filters.travelRange[0] &&
       b.suspension.front.travel <= filters.travelRange[1]
+  )
+
+  result = result.filter(
+    b =>
+      b.suspension.rear.travel >= filters.rearTravelRange[0] &&
+      b.suspension.rear.travel <= filters.rearTravelRange[1]
   )
 
   result = result.filter(
@@ -109,6 +123,7 @@ export function filterBikes(bikes: EBike[], filters: FilterState): EBike[] {
       b =>
         b.brand.toLowerCase().includes(q) ||
         b.model.toLowerCase().includes(q) ||
+        b.motor.brand.toLowerCase().includes(q) ||
         b.tagline.toLowerCase().includes(q)
     )
   }
@@ -137,28 +152,27 @@ export function filterBikes(bikes: EBike[], filters: FilterState): EBike[] {
   return result
 }
 
-interface FilterState {
-  brands: string[]
-  useTypes: UseType[]
-  priceRange: [number, number]
-  travelRange: [number, number]
-  batteryRange: [number, number]
-  weightRange: [number, number]
-  motorTorqueRange: [number, number]
-  sortBy: SortOption
-  search: string
-}
+export type { FilterState, SortOption }
 
-export type SortOption = 'price-asc' | 'price-desc' | 'weight-asc' | 'weight-desc' | 'travel-front' | 'battery'
+export function createDefaultFilters(bikes: EBike[]): FilterState {
+  const prices = bikes.map(b => b.price)
+  const frontTravel = bikes.map(b => b.suspension.front.travel)
+  const rearTravel = bikes.map(b => b.suspension.rear.travel)
+  const batteries = bikes.map(b => b.battery.capacity)
+  const weights = bikes.map(b => b.specs.weight)
+  const torques = bikes.map(b => b.motor.torque)
 
-export const DEFAULT_FILTERS: FilterState = {
-  brands: [],
-  useTypes: [],
-  priceRange: [3000, 15000],
-  travelRange: [120, 200],
-  batteryRange: [500, 1000],
-  weightRange: [18, 30],
-  motorTorqueRange: [50, 100],
-  sortBy: 'price-asc',
-  search: '',
+  return {
+    brands: [],
+    motorBrands: [],
+    useTypes: [],
+    priceRange: [Math.min(...prices), Math.max(...prices)] as [number, number],
+    travelRange: [Math.min(...frontTravel), Math.max(...frontTravel)] as [number, number],
+    rearTravelRange: [Math.min(...rearTravel), Math.max(...rearTravel)] as [number, number],
+    batteryRange: [Math.min(...batteries), Math.max(...batteries)] as [number, number],
+    weightRange: [Math.min(...weights), Math.max(...weights)] as [number, number],
+    motorTorqueRange: [Math.min(...torques), Math.max(...torques)] as [number, number],
+    sortBy: 'price-asc' as SortOption,
+    search: '',
+  }
 }
