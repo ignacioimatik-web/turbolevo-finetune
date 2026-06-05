@@ -27,34 +27,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [compare, setCompare] = useLocalStorage<string[]>(COMPARE_KEY, [])
 
   const addToGarage = useCallback((id: string) => {
-    setGarage(prev => (prev.includes(id) ? prev : [...prev, id]))
+    setGarage(prev => Array.isArray(prev) ? (prev.includes(id) ? prev : [...prev, id]) : [id])
   }, [setGarage])
 
   const removeFromGarage = useCallback((id: string) => {
-    setGarage(prev => prev.filter(b => b !== id))
+    setGarage(prev => Array.isArray(prev) ? prev.filter(b => b !== id) : prev)
   }, [setGarage])
 
   const isInGarage = useCallback(
-    (id: string) => garage.includes(id),
+    (id: string) => Array.isArray(garage) && garage.includes(id),
     [garage],
   )
 
   const toggleCompare = useCallback((id: string) => {
     setCompare(prev =>
-      prev.includes(id)
+      Array.isArray(prev) && prev.includes(id)
         ? prev.filter(b => b !== id)
-        : prev.length < 4
+        : Array.isArray(prev) && prev.length < 4
           ? [...prev, id]
           : prev,
     )
   }, [setCompare])
 
   const removeFromCompare = useCallback((id: string) => {
-    setCompare(prev => prev.filter(b => b !== id))
+    setCompare(prev => Array.isArray(prev) ? prev.filter(b => b !== id) : prev)
   }, [setCompare])
 
   const isInCompare = useCallback(
-    (id: string) => compare.includes(id),
+    (id: string) => Array.isArray(compare) && compare.includes(id),
     [compare],
   )
 

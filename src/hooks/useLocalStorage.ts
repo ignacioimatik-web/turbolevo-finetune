@@ -4,7 +4,10 @@ export function useLocalStorage<T>(key: string, fallback: T): [T, React.Dispatch
   const [value, setValue] = useState<T>(() => {
     try {
       const stored = localStorage.getItem(key)
-      return stored !== null ? (JSON.parse(stored) as T) : fallback
+      if (stored === null) return fallback
+      const parsed = JSON.parse(stored) as T
+      if (Array.isArray(fallback) && !Array.isArray(parsed)) return fallback
+      return parsed
     } catch {
       return fallback
     }
