@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>TurboLevo Suspension Tuner</title>
+    <style>
+        body {font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 2rem;}
+        h1 {text-align: center;}
+        label {display: block; margin-top: 1rem;}
+        input {width: 100%; padding: .5rem; margin-top: .3rem;}
+        button {margin-top: 1.5rem; padding: .7rem 1.2rem; font-size: 1rem;}
+        .result {margin-top: 2rem; padding: 1rem; background: #f4f4f4; border-radius: 5px;}
+        pre {white-space: pre-wrap; word-wrap: break-word;}
+    </style>
+</head>
+<body>
+    <h1>TurboLevo Suspension Tuner</h1>
+    <p>Introduce los datos de tu bicicleta y obtén el sag recomendado, así como guías de rebote y compresión.</p>
+    <form id="tuner-form">
+        <label for="weight">Peso total (kg):
+            <input type="number" id="weight" name="weight" step="0.1" required />
+        </label>
+        <label for="rear_travel">Recorrido total de la rueda trasera (mm):
+            <input type="number" id="rear_travel" name="rear_travel" step="1" required />
+        </label>
+        <label for="leverage_ratio">Ratio de apalancamiento (leverage ratio):
+            <input type="number" id="leverage_ratio" name="leverage_ratio" step="0.01" required />
+        </label>
+        <label for="front_pressure">Presión actual de la horquilla (psi):
+            <input type="number" id="front_pressure" name="front_pressure" step="0.1" required />
+        </label>
+        <label for="rear_pressure">Presión actual del amortiguador (psi):
+            <input type="number" id="rear_pressure" name="rear_pressure" step="0.1" required />
+        </label>
+        <button type="submit">Calcular</button>
+    </form>
+    <div class="result" id="result" style="display:none;">
+        <h2>Resultado</h2>
+        <pre id="output"></pre>
+    </div>
+    <script>
+        const form = document.getElementById('tuner-form');
+        const resultDiv = document.getElementById('result');
+        const outputPre = document.getElementById('output');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                weight: parseFloat(form.weight.value),
+                rear_travel: parseFloat(form.rear_travel.value),
+                leverage_ratio: parseFloat(form.leverage_ratio.value),
+                front_pressure: parseFloat(form.front_pressure.value),
+                rear_pressure: parseFloat(form.rear_pressure.value)
+            };
+            try {
+                const resp = await fetch('/api/calc', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const json = await resp.json();
+                if (resp.ok) {
+                    outputPre.textContent = JSON.stringify(json, null, 2);
+                } else {
+                    outputPre.textContent = 'Error: ' + (json.error || 'unknown');
+                }
+            } catch (err) {
+                outputPre.textContent = 'Fetch error: ' + err.message;
+            }
+            resultDiv.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
