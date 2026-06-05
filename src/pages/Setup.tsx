@@ -26,10 +26,10 @@ export function Setup() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        {[
+        {([
           { value: 'all' as const, label: 'Todos' },
-          ...useTypes.map(type => ({ value: type as const, label: getUseTypeLabel(type) })),
-        ].map(item => (
+          ...useTypes.map(type => ({ value: type, label: getUseTypeLabel(type) })),
+        ] as { value: UseType | 'all'; label: string }[]).map(item => (
           <button
             key={item.value}
             onClick={() => setSelectedType(item.value)}

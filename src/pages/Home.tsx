@@ -184,7 +184,7 @@ export function Home() {
 
               <div className="flex items-center gap-5 mt-8 animate-fade-in delay-400">
                 <div className="flex -space-x-2">
-                  {['Specialized', 'Trek', 'Santa Cruz', 'Canyon'].map((brand, i) => (
+                  {['Specialized', 'Trek', 'Santa Cruz', 'Canyon'].map(brand => (
                     <div key={brand} className="w-8 h-8 rounded-full bg-bg-card border-2 border-bg-primary flex items-center justify-center text-[8px] font-bold text-text-muted font-mono">
                       {brand[0]}
                     </div>

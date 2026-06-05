@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useAppState } from '../context/AppContext'
 import { TerrainCard } from '../components/TerrainCard'
 import { BikeCard } from '../components/BikeCard'
