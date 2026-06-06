@@ -15,7 +15,7 @@ export function VideoBackground({
   ...props 
 }: VideoBackgroundProps) {
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`absolute inset-0 overflow-hidden ${className}`}>
       <video
         src={src}
         poster={poster}
