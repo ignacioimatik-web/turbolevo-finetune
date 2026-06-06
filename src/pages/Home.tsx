@@ -4,6 +4,7 @@ import { BikeCard } from '../components/BikeCard'
 import { TerrainCard } from '../components/TerrainCard'
 import { terrains } from '../data/bikes'
 import { formatNumber } from '../utils/helpers'
+import { VideoBackground } from '../components/VideoBackground'
 
 function HeroBikeVisual() {
   return (
@@ -141,6 +142,11 @@ export function Home() {
     <div>
       {/* ── HERO ── */}
       <section className="relative min-h-[85vh] sm:min-h-screen flex items-center overflow-hidden carbon-weave">
+        <VideoBackground 
+          src="https://assets.mixkit.co/videos/44319/44319-720.mp4" 
+          overlay={true}
+          className="z-0"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-transparent to-bg-primary/60" />
         <div className="absolute inset-0 grain-texture" />
         <HexGrid />
