@@ -1,35 +1,81 @@
-# Proyecto de Ajuste de Suspensión para Specialized Turbo Levo Carbon
+# TurboLevo Finetune — Catálogo e-MTB
 
-## Descripción
-Esta aplicación está diseñada para ayudar a los ciclistas de e-bike, específicamente para la Specialized Turbo Levo Carbon, a calcular y optimizar los ajustes de sag (hundimiento), rebote y compresión para su horquilla y amortiguador.
+Aplicación catálogo de bicicletas eléctricas de enduro con recomendador determinista, comparador, garaje personal y calculadora de setup de suspensión.
 
-Seguir las recomendaciones de este script te ayudará a tener un punto de partida excelente para que tu bicicleta Specialized Turbo Levo Carbon ofrezca el máximo rendimiento y confort.
+**Stack:** React 19, TypeScript, Vite, Tailwind CSS v4, React Router 7  
+**Despliegue:** Vercel → `turbolevo-finetune-2026.vercel.app`
 
-## Componentes Soportados:
-- **Horquilla:** Fox 38 Performance (180mm recorrido)
-- **Amortiguador Trasero:** RockShox Air Deluxe (modelo específico a confirmar)
-- **Bicicleta:** Specialized Turbo Levo Carbon (modelo y año a confirmar para ratio de apalancamiento)
+---
 
-## Cómo usarlo:
-1.  Ejecuta el script principal `suspension_tuner.py`.
-2.  Introduce tu peso total (con equipamiento, en kg).
-3.  Introduce el recorrido total de la rueda trasera de tu bici (en mm).
-4.  Introduce el **ratio de apalancamiento (leverage ratio)** específico de tu bici. Si no lo conoces, el script usará un valor por defecto que puede ser menos preciso. ¡Investiga este valor para obtener los mejores resultados!
-5.  Introduce la presión actual de la horquilla y el amortiguador (en PSI).
-6.  El script te proporcionará sugerencias de sag (en mm) y guías para ajustar el rebote y la compresión.
-7.  Se te dará la opción de guardar estos ajustes como un perfil para su uso futuro.
+## Funcionalidades
 
-## Consideraciones Clave:
--   **Ratio de Apalancamiento:** La precisión del cálculo del sag del amortiguador trasero depende críticamente de tener el ratio de apalancamiento correcto para tu modelo específico de Turbo Levo Carbon y su año.
--   **Sag:** Los valores de sag sugeridos son puntos de partida. **La sensación en ruta es el factor más importante.** Ajusta tu presión de aire hasta que logres el sag recomendado.
--   **Rebote y Compresión:** Estos ajustes son en gran medida empíricos. Las guías proporcionadas son recomendaciones de mecánicos experimentados para ayudarte a empezar. Experimenta en senderos reales.
+- **Catálogo** — 12 e-MTB con filtros por marca, motor, uso, precio, recorrido, batería, peso y par
+- **Ficha detalle** — Especificaciones, geometría, autonomía por modo, setup base
+- **Comparador** — Hasta 4 modelos lado a lado
+- **Garaje** — Colección personal guardada en localStorage
+- **Setup** — Presión de suspensión, sag, rebote y compresión para cada modelo
+- **Recomendación** — Motor determinista con 8 factores ponderados (terreno, estilo, presupuesto, autonomía, peso)
+- **Rutas** — Contextos de terreno con consejos de configuración
+- **Terrains** — Guías por tipo de terreno (rocoso, senderos, subidas, bajadas, barro, seco)
 
-## Estructura de Archivos:
--   `suspension_tuner.py`: Script principal con la lógica de cálculo.
--   `README.md`: Este archivo, con información general y propósito del proyecto.
--   `profiles/`: Carpeta donde se guardarán los perfiles de ajuste creados (archivos `.json`).
+---
 
-## Próximos pasos:
--   Validar el ratio de apalancamiento para la Turbo Levo Carbon.
--   Refinar las guías de ajuste de rebote y compresión basándose en la experiencia del usuario.
--   Considerar la adición de soporte para otros componentes de suspensión.
+## Imágenes
+
+### Política de uso
+
+Las imágenes de bicicletas en este proyecto se utilizan **exclusivamente como referencia visual y con fines de catálogo**. Este es un proyecto de demostración/portfolio. **No está autorizado para uso comercial ni despliegue público sin verificar las licencias de cada imagen.**
+
+### Procedencia
+
+| Marca | Modelo | Fuente | Tipo de fuente | Coincidencia |
+|-------|--------|--------|---------------|-------------|
+| Canyon | Strive:ON CFR | [Canyon Media Centre](https://media-centre.canyon.com) | Press kit oficial | exact |
+| Cannondale | Moterra SL 1 | [Cannondale Widen DAM](https://embed.widencdn.net) | Gestor activos oficial | same-family (SL 2) |
+| Giant | Reign E+ 1 | [Giant CDN](https://images2.giant-bicycles.com) | CDN oficial | exact |
+| Mondraker | Crafty XR | [Mondraker CDN](https://cdn.mondraker.com) | CDN oficial | exact |
+| Santa Cruz | Heckler 3 XO | [santacruzbicycles.com](https://www.santacruzbicycles.com) | Tienda oficial | exact |
+| Focus | Jam² 9.9 | [focus-bikes.com](https://www.focus-bikes.com) | CDN oficial (catálogo) | same-family (6.9) |
+| Orbea | Wild M-LTD | Dales Cycles (retailer) | Retailer — **no oficial** | exact |
+| Specialized | Turbo Levo Pro | sefiles.net (retailer CDN) | Retailer — **no oficial** | same-family |
+| Trek | Rail 9.9 XTR | sefiles.net (retailer CDN) | Retailer — **no oficial** | exact |
+| Commencal | Meta Power TR Race | VitalMTB (review) | Tercero — **no oficial** | same-family |
+| Cube | Stereo Hybrid 160 HPC | Cube Store Brilon (retailer) | Retailer — **no oficial** | same-family |
+| YT Industries | Decoy Core 4 | Upway (retailer) | Retailer — **no oficial** | exact |
+
+**Leyenda:**
+- **exact** — La imagen corresponde exactamente al modelo anunciado
+- **same-family** — La imagen es del mismo cuadro/familia pero distinto trim o año
+
+### Imágenes pendientes de migrar a fuentes oficiales
+
+Las siguientes imágenes provienen de fuentes no oficiales (retailers, terceros) y deberían reemplazarse por imágenes de press kit o CDN oficial del fabricante para uso en producción:
+
+1. **Specialized Turbo Levo Pro** → Buscar en specialized.com o media centre
+2. **Trek Rail 9.9 XTR** → Buscar en trekbikes.com o media centre
+3. **Orbea Wild M-LTD** → Buscar en orbea.com
+4. **Commencal Meta Power TR Race** → Buscar en commencal.com (crítico: fuente actual es foto de fotógrafo)
+5. **Cube Stereo Hybrid 160 HPC SLX** → Buscar en cube.eu
+6. **YT Decoy Core 4** → Buscar en yt-industries.com (el CDN oficial `cdn-prod.yt-industries.com` es viable)
+
+---
+
+## Desarrollo
+
+```bash
+npm install
+npm run dev       # desarrollo
+npm run build     # producción
+npx tsc -b        # typecheck
+```
+
+## Despliegue
+
+```bash
+vercel --prod
+```
+
+## Licencia
+
+Código: MIT  
+Imágenes: Cada imagen pertenece a su respectivo fabricante. Ver README > Imágenes > Política de uso.

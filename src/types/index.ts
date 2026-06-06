@@ -1,5 +1,15 @@
 export type UseType = 'trail' | 'enduro' | 'bikepark' | 'rutas-largas'
 
+export interface BikeImages {
+  hero: string
+  thumbnail?: string
+  gallery?: string[]
+  sourceUrl?: string
+  sourceLabel?: string
+  imageMatch: 'exact' | 'same-family' | 'fallback'
+  imageNote?: string
+}
+
 export interface EBike {
   id: string
   brand: string
@@ -10,6 +20,7 @@ export interface EBike {
   description: string
   price: number
   image: string
+  images: BikeImages
   brandColor: string
   wheelSetup: string
   terrainStrengths: string[]
